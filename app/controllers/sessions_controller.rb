@@ -10,14 +10,19 @@ class SessionsController < ApplicationController
 
   def create
 
-    if identity = Identity.find_by_email_address(email_address)
-      magic_link = identity.send_magic_link
-      serve_development_magic_link(magic_link)
-    end
+    identity = Identity.find_by_email_address(email_address)
+    magic_link = identity&.send_magic_link
 
     respond_to do |format|
-      format.html { redirect_to session_magic_link_path }
-      format.json { head :created  }
+      format.html do 
+        serve_development_magic_link(magic_link)
+        redirect_to session_magic_link_path
+      end
+
+      format.json do
+        response.set_header("X-Magic-Link-Code", magic_link&.code) if Rails.env.development? && magic_link
+        head :created
+      end
     end
   end
 
