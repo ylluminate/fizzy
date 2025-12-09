@@ -44,7 +44,7 @@ module ActiveSupport
     fixtures :all
 
     include ActiveJob::TestHelper
-    include ActionTextTestHelper, CardTestHelper, ChangeTestHelper, SessionTestHelper
+    include ActionTextTestHelper, CachingTestHelper, CardTestHelper, ChangeTestHelper, SessionTestHelper
     include Turbo::Broadcastable::TestHelper
 
     setup do
@@ -61,6 +61,17 @@ class ActionDispatch::IntegrationTest
   setup do
     integration_session.default_url_options[:script_name] = "/#{ActiveRecord::FixtureSet.identify("37signals")}"
   end
+
+  private
+    def without_action_dispatch_exception_handling
+      original = Rails.application.config.action_dispatch.show_exceptions
+      Rails.application.config.action_dispatch.show_exceptions = :none
+      Rails.application.instance_variable_set(:@app_env_config, nil) # Clear memoized env_config
+      yield
+    ensure
+      Rails.application.config.action_dispatch.show_exceptions = original
+      Rails.application.instance_variable_set(:@app_env_config, nil) # Reset env_config
+    end
 end
 
 class ActionDispatch::SystemTestCase

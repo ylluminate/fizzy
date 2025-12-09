@@ -145,4 +145,49 @@ class BoardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :forbidden
   end
+
+  test "disables select all/none buttons for non-privileged user" do
+    logout_and_sign_in_as :jz
+    assert_not users(:jz).can_administer_board?(boards(:writebook))
+
+    get edit_board_path(boards(:writebook))
+
+    assert_response :success
+    assert_select "button[disabled]", text: "Select all"
+    assert_select "button[disabled]", text: "Select none"
+  end
+
+  test "enables select all/none buttons for privileged user" do
+    assert users(:kevin).can_administer_board?(boards(:writebook))
+
+    get edit_board_path(boards(:writebook))
+
+    assert_response :success
+    assert_select "button:not([disabled])", text: "Select all"
+    assert_select "button:not([disabled])", text: "Select none"
+  end
+
+  test "access toggle disabled state is cached correctly" do
+    board = boards(:writebook)
+    david = users(:david)
+
+    with_actionview_partial_caching do
+      # privileged user
+      assert users(:kevin).can_administer_board?(board)
+
+      get edit_board_path(board)
+
+      assert_response :success
+      assert_select "input.switch__input[name='user_ids[]'][value='#{david.id}']:not([disabled])"
+
+      # unprivileged user
+      logout_and_sign_in_as :jz
+      assert_not users(:jz).can_administer_board?(board)
+
+      get edit_board_path(board)
+
+      assert_response :success
+      assert_select "input.switch__input[name='user_ids[]'][value='#{david.id}'][disabled]"
+    end
+  end
 end
