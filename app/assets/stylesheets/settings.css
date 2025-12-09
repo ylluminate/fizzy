@@ -100,4 +100,38 @@
       padding-inline: var(--settings-spacer);
     }
   }
+
+  /* Subscriptions
+  /* ------------------------------------------------------------------------ */
+  :root {
+    --settings-subscription-background: linear-gradient(to bottom, var(--color-canvas), oklch(var(--lch-violet-lighter)));
+    --settings-subscription-color: oklch(var(--lch-violet-medium));
+    --settings-subscription-text-color: oklch(var(--lch-violet-dark));
+
+    .settings-subscription__button {
+      --btn-background: var(--settings-subscription-color);
+    }
+
+    .settings-subscription__divider {
+      --divider-color: currentColor;
+
+      color: var(--settings-subscription-color);
+      margin-block-start: calc(var(--block-space-half) * -1);
+    }
+
+    .settings-subscription__footer {
+      color: var(--settings-subscription-text-color);
+
+      &::before {
+        content: "————";
+        display: block;
+        margin: auto;
+        text-align: center;
+      }
+    }
+
+    .settings-subscription__panel {
+      background: var(--settings-subscription-background);
+    }
+  }
 }
