@@ -33,7 +33,7 @@ Rails.application.configure do
 
     policy.object_src :none
     policy.base_uri :none
-    policy.form_action :self
+    policy.form_action :self, "https://checkout.stripe.com"
     policy.frame_ancestors :self
 
     # Specify URI for violation reports (e.g., Sentry CSP endpoint)
