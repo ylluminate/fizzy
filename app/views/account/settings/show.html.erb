@@ -22,24 +22,30 @@
 </section>
 
 <% if Current.user.admin? %>
-  <section class="billing panel panel--wide shadow center margin-block-double" style="background: linear-gradient(to bottom, var(--color-canvas), oklch(var(--lch-purple-lighter)))">
-    <h2 class="divider txt-small txt-uppercase margin-none" style="color: var(--color-card-6); --divider-color: currentColor">Subscription</h2>
+  <section class="billing panel panel--wide shadow center margin-block-double" style="background: linear-gradient(to bottom, var(--color-canvas), oklch(var(--lch-violet-lighter)))">
+    <h2 class="divider txt-small txt-uppercase margin-none" style="margin-block-start: calc(var(--block-space-half) * -1); color: var(--color-card-6); --divider-color: currentColor">Subscription</h2>
 
     <% if Current.account.plan.free? %>
-      <h3 class="margin-block-start margin-block-end-half txt-x-large font-weight-black">You’ve used <span class="fill-highlighter"><%= Current.account.cards_count  %>/<%= Plan.free.card_limit %></span> free cards</h3>
+      <% if Current.account.cards_count < Plan.free.card_limit %>
+        <h3 class="margin-block-start margin-block-end-half txt-large font-weight-black">You’ve used <u><%= Current.account.cards_count %></u> free cards out of <%= Plan.free.card_limit %></h3>
+      <% else %>
+        <h3 class="margin-block-start margin-block-end-half txt-large font-weight-black">You’ve used up your <u><%= Plan.free.card_limit %></u> free cards</h3>
+      <% end %>
+
       <p class="margin-none-block-start">If you’d like to keep using Fizzy past <%= Plan.free.card_limit %> cards, it’s only <strong>$<%= Plan.paid.price %>/month</strong> for <strong>unlimited cards</strong> + <strong>unlimited users</strong>. You’ll also get <strong><%= number_to_human_size(Plan.paid.formatted_storage_limit) %></strong> of storage. </p>
 
-      <%= button_to "Upgrade now for $#{ Plan.paid.price }", account_subscription_path, class: "btn btn--reversed txt-large", style: "--btn-background: var(--color-card-6)",data: { turbo: false } %>
+      <%= button_to "Upgrade to Unlimitted fo $#{ Plan.paid.price }/month", account_subscription_path, class: "btn btn--reversed txt-medium", style: "--btn-background: var(--color-card-6)",data: { turbo: false } %>
 
-      <p class="txt-small margin-none-block-end">You’re currently on the <strong><%= Current.account.plan.name %></strong> plan which includes <%= Plan.free.card_limit %> cards, unlimitted users, and <%= number_to_human_size(Plan.free.formatted_storage_limit) %> of storage.</p>
+      <p>Cancel any time, no contracts, take your data with you whenever.</p>
+      <p class="txt-small margin-none-block-end" style="color: oklch(var(--lch-violet-dark));">————<br>Right now you’re on the <strong><%= Current.account.plan.name %></strong> plan which includes <%= Plan.free.card_limit %> cards, unlimitted users, and <%= number_to_human_size(Plan.free.formatted_storage_limit) %> of storage.</p>
     <% else %>
       <h3 class="margin-block-start margin-block-end-half txt-x-large font-weight-black">Thank you for buying Fizzy</h3>
+
+      <% if Current.account.subscription %>
+        <%= render "account/settings/subscription", subscription: Current.account.subscription %>
+        <p class="txt-small" style="color: oklch(var(--lch-violet-dark));">————<br>Right now you’re on the <strong><%= Current.account.plan.name %></strong> plan which includes unlimitted cards, unlimitted users, and <%= number_to_human_size(Plan.paid.formatted_storage_limit) %> of storage.</p>
+      <% end %>
     <% end %>
 
-    <% if Current.account.subscription %>
-
-      <%= render "account/settings/subscription", subscription: Current.account.subscription %>
-      <p class="txt-small">You're currently on the <strong><%= Current.account.plan.name %></strong> plan which includes unlimitted cards, unlimitted users, and <%= number_to_human_size(Plan.paid.formatted_storage_limit) %> of storage.</p>
-    <% end %>
   </section>
 <% end %>
