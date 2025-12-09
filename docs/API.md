@@ -112,6 +112,92 @@ curl -X PUT \
   http://fizzy.localhost:3006/686465299/users/03f5v9zjw7pz8717a4no1h8a7
 ```
 
+## Rich Text Fields
+
+Some fields accept rich text content. These fields accept HTML input, which will be sanitized to remove unsafe tags and attributes.
+
+```json
+{
+  "card": {
+    "title": "My card",
+    "description": "<p>This is <strong>bold</strong> and this is <em>italic</em>.</p><ul><li>Item 1</li><li>Item 2</li></ul>"
+  }
+}
+```
+
+### Attaching files to rich text
+
+To attach files (images, documents) to rich text fields, use ActionText's direct upload flow:
+
+#### 1. Create a direct upload
+
+First, request a direct upload URL by sending file metadata:
+
+```bash
+curl -X POST \
+  -H "Authorization: Bearer your-token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "blob": {
+      "filename": "screenshot.png",
+      "byte_size": 12345,
+      "checksum": "GQ5SqLsM7ylnji0Wgd9wNA==",
+      "content_type": "image/png"
+    }
+  }' \
+  https://app.fizzy.do/rails/active_storage/direct_uploads
+```
+
+The `checksum` is a Base64-encoded MD5 hash of the file content.
+
+__Response:__
+
+```json
+{
+  "id": "abc123",
+  "key": "abc123def456",
+  "filename": "screenshot.png",
+  "content_type": "image/png",
+  "byte_size": 12345,
+  "checksum": "GQ5SqLsM7ylnji0Wgd9wNA==",
+  "direct_upload": {
+    "url": "https://storage.example.com/...",
+    "headers": {
+      "Content-Type": "image/png",
+      "Content-MD5": "GQ5SqLsM7ylnji0Wgd9wNA=="
+    }
+  },
+  "signed_id": "eyJfcmFpbHMi..."
+}
+```
+
+#### 2. Upload the file
+
+Upload the file directly to the provided URL with the specified headers:
+
+```bash
+curl -X PUT \
+  -H "Content-Type: image/png" \
+  -H "Content-MD5: GQ5SqLsM7ylnji0Wgd9wNA==" \
+  --data-binary @screenshot.png \
+  "https://storage.example.com/..."
+```
+
+#### 3. Reference the file in rich text
+
+Use the `signed_id` from step 1 to embed the file in your rich text using an `<action-text-attachment>` tag:
+
+```json
+{
+  "card": {
+    "title": "Card with image",
+    "description": "<p>Here's a screenshot:</p><action-text-attachment sgid=\"eyJfcmFpbHMi...\"></action-text-attachment>"
+  }
+}
+```
+
+The `sgid` attribute should contain the `signed_id` returned from the direct upload response.
+
 ## Endpoints
 
 ### Identity
@@ -288,7 +374,412 @@ Returns `204 No Content` on success.
 
 ### Cards
 
-Cards are tasks or items of work on a board
+Cards are tasks or items of work on a board. They can be organized into columns, tagged, assigned to users, and have comments.
+
+#### `GET /:account_slug/cards`
+
+Returns a paginated list of cards you have access to. Results can be filtered using query parameters.
+
+__Query Parameters:__
+
+| Parameter | Description |
+|-----------|-------------|
+| `board_id` | Filter by board ID |
+| `column_id` | Filter by column ID |
+| `tag_id` | Filter by tag ID |
+| `assignee_id` | Filter by assignee user ID |
+| `status` | Filter by status: `published`, `closed`, `not_now` |
+
+__Response:__
+
+```json
+[
+  {
+    "id": "03f5vaeq985jlvwv3arl4srq2",
+    "number": 1,
+    "title": "First!",
+    "status": "published",
+    "description": "Hello, World!",
+    "description_html": "<div class=\"action-text-content\"><p>Hello, World!</p></div>",
+    "image_url": null,
+    "tags": ["programming"],
+    "golden": false,
+    "last_active_at": "2025-12-05T19:38:48.553Z",
+    "created_at": "2025-12-05T19:38:48.540Z",
+    "url": "http://fizzy.localhost:3006/897362094/cards/4",
+    "board": {
+      "id": "03f5v9zkft4hj9qq0lsn9ohcm",
+      "name": "Fizzy",
+      "all_access": true,
+      "created_at": "2025-12-05T19:36:35.534Z",
+      "url": "http://fizzy.localhost:3006/897362094/boards/03f5v9zkft4hj9qq0lsn9ohcm",
+      "creator": {
+        "id": "03f5v9zjw7pz8717a4no1h8a7",
+        "name": "David Heinemeier Hansson",
+        "role": "owner",
+        "active": true,
+        "email_address": "david@example.com",
+        "created_at": "2025-12-05T19:36:35.401Z",
+        "url": "http://fizzy.localhost:3006/897362094/users/03f5v9zjw7pz8717a4no1h8a7"
+      }
+    },
+    "creator": {
+      "id": "03f5v9zjw7pz8717a4no1h8a7",
+      "name": "David Heinemeier Hansson",
+      "role": "owner",
+      "active": true,
+      "email_address": "david@example.com",
+      "created_at": "2025-12-05T19:36:35.401Z",
+      "url": "http://fizzy.localhost:3006/897362094/users/03f5v9zjw7pz8717a4no1h8a7"
+    },
+    "comments_url": "http://fizzy.localhost:3006/897362094/cards/4/comments"
+  },
+]
+```
+
+#### `GET /:account_slug/cards/:card_number`
+
+Returns a specific card by its number.
+
+__Response:__
+
+Same as the card object in the list response.
+
+#### `POST /:account_slug/boards/:board_id/cards`
+
+Creates a new card in a board.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `title` | string | Yes | The title of the card |
+| `description` | string | No | Rich text description of the card |
+| `status` | string | No | Initial status: `published` (default), `closed`, `not_now` |
+| `image` | file | No | Header image for the card |
+| `tag_ids` | array | No | Array of tag IDs to apply to the card |
+
+__Request:__
+
+```json
+{
+  "card": {
+    "title": "Add dark mode support",
+    "description": "We need to add dark mode to the app"
+  }
+}
+```
+
+__Response:__
+
+Returns `201 Created` with a `Location` header pointing to the new card.
+
+#### `PUT /:account_slug/cards/:card_number`
+
+Updates a card.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `title` | string | No | The title of the card |
+| `description` | string | No | Rich text description of the card |
+| `status` | string | No | Card status: `published`, `closed`, `not_now` |
+| `image` | file | No | Header image for the card |
+| `tag_ids` | array | No | Array of tag IDs to apply to the card |
+
+__Request:__
+
+```json
+{
+  "card": {
+    "title": "Add dark mode support (Updated)"
+  }
+}
+```
+
+__Response:__
+
+Returns the updated card.
+
+#### `DELETE /:account_slug/cards/:card_number`
+
+Deletes a card. Only the card creator or board administrators can delete cards.
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+#### `POST /:account_slug/cards/:card_number/closure`
+
+Closes a card.
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+#### `DELETE /:account_slug/cards/:card_number/closure`
+
+Reopens a closed card.
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+#### `POST /:account_slug/cards/:card_number/not_now`
+
+Moves a card to "Not Now" status.
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+#### `POST /:account_slug/cards/:card_number/triage`
+
+Moves a card from triage into a column.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `column_id` | string | Yes | The ID of the column to move the card into |
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+#### `DELETE /:account_slug/cards/:card_number/triage`
+
+Sends a card back to triage.
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+#### `POST /:account_slug/cards/:card_number/taggings`
+
+Toggles a tag on or off for a card. If the tag doesn't exist, it will be created.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `tag_title` | string | Yes | The title of the tag (leading `#` is stripped) |
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+#### `POST /:account_slug/cards/:card_number/assignments`
+
+Toggles assignment of a user to/from a card.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `assignee_id` | string | Yes | The ID of the user to assign/unassign |
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+#### `POST /:account_slug/cards/:card_number/watch`
+
+Subscribes the current user to notifications for this card.
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+#### `DELETE /:account_slug/cards/:card_number/watch`
+
+Unsubscribes the current user from notifications for this card.
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+### Comments
+
+Comments are attached to cards and support rich text.
+
+#### `GET /:account_slug/cards/:card_number/comments/:comment_id`
+
+Returns a specific comment.
+
+__Response:__
+
+```json
+{
+  "id": "03f5v9zo9qlcwwpyc0ascnikz",
+  "created_at": "2025-12-05T19:36:35.534Z",
+  "updated_at": "2025-12-05T19:36:35.534Z",
+  "body": {
+    "plain_text": "This looks great!",
+    "html": "<div class=\"action-text-content\">This looks great!</div>"
+  },
+  "creator": {
+    "id": "03f5v9zjw7pz8717a4no1h8a7",
+    "name": "David Heinemeier Hansson",
+    "role": "owner",
+    "active": true,
+    "email_address": "david@example.com",
+    "created_at": "2025-12-05T19:36:35.401Z",
+    "url": "http://fizzy.localhost:3006/897362094/users/03f5v9zjw7pz8717a4no1h8a7"
+  },
+  "reactions_url": "http://fizzy.localhost:3006/897362094/cards/3/comments/03f5v9zo9qlcwwpyc0ascnikz/reactions",
+  "url": "http://fizzy.localhost:3006/897362094/cards/3/comments/03f5v9zo9qlcwwpyc0ascnikz"
+}
+```
+
+#### `POST /:account_slug/cards/:card_number/comments`
+
+Creates a new comment on a card.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `body` | string | Yes | The comment body (supports rich text) |
+
+__Request:__
+
+```json
+{
+  "comment": {
+    "body": "This looks great!"
+  }
+}
+```
+
+__Response:__
+
+Returns `201 Created` with a `Location` header pointing to the new comment.
+
+#### `PUT /:account_slug/cards/:card_number/comments/:comment_id`
+
+Updates a comment. Only the comment creator can update their comments.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `body` | string | Yes | The updated comment body |
+
+__Request:__
+
+```json
+{
+  "comment": {
+    "body": "This looks even better now!"
+  }
+}
+```
+
+__Response:__
+
+Returns the updated comment.
+
+#### `DELETE /:account_slug/cards/:card_number/comments/:comment_id`
+
+Deletes a comment. Only the comment creator can delete their comments.
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+### Reactions
+
+Reactions are short - 16 character long - responses to comments.
+
+#### `POST /:account_slug/cards/:card_number/comments/:comment_id/reactions`
+
+Adds a reaction to a comment.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `content` | string | Yes | The reaction emoji (e.g., "👍", "❤️", "🎉") |
+
+__Request:__
+
+```json
+{
+  "reaction": {
+    "content": "👍"
+  }
+}
+```
+
+__Response:__
+
+Returns `201 Created` on success.
+
+#### `DELETE /:account_slug/cards/:card_number/comments/:comment_id/reactions/:reaction_id`
+
+Removes your reaction from a comment.
+
+__Response:__
+
+Returns `204 No Content` on success.
+
+### Steps
+
+Steps are to-do items on a card.
+
+#### `GET /:account_slug/cards/:card_number/steps/:step_id`
+
+Returns a specific step.
+
+__Response:__
+
+```json
+{
+  "id": "03f5v9zo9qlcwwpyc0ascnikz",
+  "content": "Write tests",
+  "completed": false
+}
+```
+
+#### `POST /:account_slug/cards/:card_number/steps`
+
+Creates a new step on a card.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `content` | string | Yes | The step text |
+| `completed` | boolean | No | Whether the step is completed (default: `false`) |
+
+__Request:__
+
+```json
+{
+  "step": {
+    "content": "Write tests"
+  }
+}
+```
+
+__Response:__
+
+Returns `201 Created` with a `Location` header pointing to the new step.
+
+#### `PUT /:account_slug/cards/:card_number/steps/:step_id`
+
+Updates a step.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `content` | string | No | The step text |
+| `completed` | boolean | No | Whether the step is completed |
+
+__Request:__
+
+```json
+{
+  "step": {
+    "completed": true
+  }
+}
+```
+
+__Response:__
+
+Returns the updated step.
+
+#### `DELETE /:account_slug/cards/:card_number/steps/:step_id`
+
+Deletes a step.
+
+__Response:__
+
+Returns `204 No Content` on success.
 
 ### Columns
 
