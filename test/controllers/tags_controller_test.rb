@@ -6,7 +6,7 @@ class TagsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index as JSON" do
-    tags = users(:kevin).account.tags.all.alphabetically
+    tags = users(:kevin).account.tags.alphabetically
 
     get tags_path, as: :json
     assert_response :success

@@ -1,1 +1,1 @@
-json.array! @tags, partial: "tags/tag", as: :tag
+json.array! @page.records, partial: "tags/tag", as: :tag

@@ -1,5 +1,5 @@
 class TagsController < ApplicationController
   def index
-    @tags = Current.account.tags.all.alphabetically
+    set_page_and_extract_portion_from Current.account.tags.alphabetically
   end
 end
