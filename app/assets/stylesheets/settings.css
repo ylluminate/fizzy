@@ -134,6 +134,7 @@
     }
 
     .settings-subscription__notch {
+      animation: wiggle 500ms ease;
       background: var(--settings-subscription-background);
       box-shadow: 0 0 0.3em 0.2em var(--settings-subscription-color);
       border-radius: 3em;
