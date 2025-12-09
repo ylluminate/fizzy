@@ -8,6 +8,7 @@ class NotificationsController < ApplicationController
     respond_to do |format|
       format.turbo_stream if current_page_param # Allows read-all action to side step pagination
       format.html
+      format.json
     end
   end
 end
