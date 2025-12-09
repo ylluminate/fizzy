@@ -4,6 +4,10 @@ class Cards::CommentsController < ApplicationController
   before_action :set_comment, only: %i[ show edit update destroy ]
   before_action :ensure_creatorship, only: %i[ edit update destroy ]
 
+  def index
+    set_page_and_extract_portion_from @card.comments.chronologically
+  end
+
   def create
     @comment = @card.comments.create!(comment_params)
 

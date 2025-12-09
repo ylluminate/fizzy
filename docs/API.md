@@ -351,7 +351,7 @@ __Request:__
     "name": "Updated board name",
     "auto_postpone_period": 14,
     "public_description": "This is a **public** description of the board.",
-    all_access: false,
+    "all_access": false,
     "user_ids": [
       "03f5v9zppzlksuj4mxba2nbzn",
       "03f5v9zjw7pz8717a4no1h8a7"
@@ -594,6 +594,37 @@ Returns `204 No Content` on success.
 
 Comments are attached to cards and support rich text.
 
+#### `GET /:account_slug/cards/:card_number/comments`
+
+Returns a paginated list of comments on a card, sorted chronologically (oldest first).
+
+__Response:__
+
+```json
+[
+  {
+    "id": "03f5v9zo9qlcwwpyc0ascnikz",
+    "created_at": "2025-12-05T19:36:35.534Z",
+    "updated_at": "2025-12-05T19:36:35.534Z",
+    "body": {
+      "plain_text": "This looks great!",
+      "html": "<div class=\"action-text-content\">This looks great!</div>"
+    },
+    "creator": {
+      "id": "03f5v9zjw7pz8717a4no1h8a7",
+      "name": "David Heinemeier Hansson",
+      "role": "owner",
+      "active": true,
+      "email_address": "david@example.com",
+      "created_at": "2025-12-05T19:36:35.401Z",
+      "url": "http://fizzy.localhost:3006/897362094/users/03f5v9zjw7pz8717a4no1h8a7"
+    },
+    "reactions_url": "http://fizzy.localhost:3006/897362094/cards/3/comments/03f5v9zo9qlcwwpyc0ascnikz/reactions",
+    "url": "http://fizzy.localhost:3006/897362094/cards/3/comments/03f5v9zo9qlcwwpyc0ascnikz"
+  }
+]
+```
+
 #### `GET /:account_slug/cards/:card_number/comments/:comment_id`
 
 Returns a specific comment.
@@ -678,6 +709,31 @@ Returns `204 No Content` on success.
 ### Reactions
 
 Reactions are short - 16 character long - responses to comments.
+
+#### `GET /:account_slug/cards/:card_number/comments/:comment_id/reactions`
+
+Returns a list of reactions on a comment.
+
+__Response:__
+
+```json
+[
+  {
+    "id": "03f5v9zo9qlcwwpyc0ascnikz",
+    "content": "👍",
+    "reacter": {
+      "id": "03f5v9zjw7pz8717a4no1h8a7",
+      "name": "David Heinemeier Hansson",
+      "role": "owner",
+      "active": true,
+      "email_address": "david@example.com",
+      "created_at": "2025-12-05T19:36:35.401Z",
+      "url": "http://fizzy.localhost:3006/897362094/users/03f5v9zjw7pz8717a4no1h8a7"
+    },
+    "url": "http://fizzy.localhost:3006/897362094/cards/3/comments/03f5v9zo9qlcwwpyc0ascnikz/reactions/03f5v9zo9qlcwwpyc0ascnikz"
+  }
+]
+```
 
 #### `POST /:account_slug/cards/:card_number/comments/:comment_id/reactions`
 
@@ -784,6 +840,29 @@ Returns `204 No Content` on success.
 ### Columns
 
 Columns represent stages in a workflow on a board. Cards move through columns as they progress.
+
+#### `GET /:account_slug/boards/:board_id/columns`
+
+Returns a list of columns on a board, sorted by position.
+
+__Response:__
+
+```json
+[
+  {
+    "id": "03f5v9zkft4hj9qq0lsn9ohcm",
+    "name": "Recording",
+    "color": "var(--color-card-default)",
+    "created_at": "2025-12-05T19:36:35.534Z"
+  },
+  {
+    "id": "03f5v9zkft4hj9qq0lsn9ohcn",
+    "name": "Published",
+    "color": "var(--color-card-4)",
+    "created_at": "2025-12-05T19:36:35.534Z"
+  }
+]
+```
 
 #### `GET /:account_slug/boards/:board_id/columns/:column_id`
 
@@ -1017,3 +1096,30 @@ Marks all unread notifications as read.
 __Response:__
 
 Returns `204 No Content` on success.
+
+### Tags
+
+Tags are labels that can be applied to cards for organization and filtering.
+
+#### `GET /:account_slug/tags`
+
+Returns a list of all tags in the account, sorted alphabetically.
+
+__Response:__
+
+```json
+[
+  {
+    "id": "03f5v9zo9qlcwwpyc0ascnikz",
+    "title": "bug",
+    "created_at": "2025-12-05T19:36:35.534Z",
+    "url": "http://fizzy.localhost:3006/897362094/cards?tag_ids[]=03f5v9zo9qlcwwpyc0ascnikz"
+  },
+  {
+    "id": "03f5v9zo9qlcwwpyc0ascnilz",
+    "title": "feature",
+    "created_at": "2025-12-05T19:36:35.534Z",
+    "url": "http://fizzy.localhost:3006/897362094/cards?tag_ids[]=03f5v9zo9qlcwwpyc0ascnilz"
+  }
+]
+```

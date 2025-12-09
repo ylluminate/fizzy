@@ -37,6 +37,15 @@ class Boards::ColumnsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "index as JSON" do
+    board = boards(:writebook)
+
+    get board_columns_path(board), as: :json
+
+    assert_response :success
+    assert_equal board.columns.count, @response.parsed_body.count
+  end
+
   test "show as JSON" do
     column = columns(:writebook_in_progress)
 

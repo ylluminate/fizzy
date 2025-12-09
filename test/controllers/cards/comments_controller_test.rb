@@ -28,6 +28,15 @@ class Cards::CommentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
+  test "index as JSON" do
+    card = cards(:logo)
+
+    get card_comments_path(card), as: :json
+
+    assert_response :success
+    assert_equal card.comments.count, @response.parsed_body.count
+  end
+
   test "create as JSON" do
     card = cards(:logo)
 
