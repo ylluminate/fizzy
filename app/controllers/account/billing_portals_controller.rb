@@ -3,7 +3,7 @@ class Account::BillingPortalsController < ApplicationController
   before_action :ensure_subscribed_account
 
   def show
-    session = Stripe::BillingPortal::Session.create(customer: Current.account.subscription.stripe_customer_id, return_url: account_subscription_url)
+    session = Stripe::BillingPortal::Session.create(customer: Current.account.subscription.stripe_customer_id, return_url: account_settings_url)
     redirect_to session.url, allow_other_host: true
   end
 
