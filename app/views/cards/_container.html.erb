@@ -37,7 +37,11 @@
     <% if card.published? %>
       <%= render "cards/container/footer/published", card: card %>
     <% elsif card.drafted? %>
-      <%= render "cards/container/footer/draft", card: card %>
+      <% if exceeds_plan_cards_limit %>
+        <%= render "account/subscriptions/upgrade" %>
+      <% else %>
+        <%= render "cards/container/footer/draft", card: card %>
+      <% end %>
     <% end %>
   </section>
 <% end %>

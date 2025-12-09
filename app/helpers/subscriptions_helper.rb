@@ -8,4 +8,8 @@ module SubscriptionsHelper
       "Your next payment of <b>$#{ subscription.plan.price }</b> will be billed on".html_safe
     end
   end
+
+  def exceeds_plan_cards_limit
+    Current.account.cards_count >= Plan.free.card_limit
+  end
 end
