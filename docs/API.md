@@ -198,13 +198,11 @@ Use the `signed_id` from step 1 to embed the file in your rich text using an `<a
 
 The `sgid` attribute should contain the `signed_id` returned from the direct upload response.
 
-## Endpoints
-
-### Identity
+## Identity
 
 An Identity represents a person using Fizzy, their email address and their users in different accounts.
 
-#### `GET /identity`
+### `GET /identity`
 
 Returns a list of accounts, including the User, the Identity has access to
 
@@ -245,11 +243,11 @@ Returns a list of accounts, including the User, the Identity has access to
 }
 ```
 
-### Boards
+## Boards
 
 Boards are where you organize your work - they contain your cards.
 
-#### `GET /:account_slug/boards`
+### `GET /:account_slug/boards`
 
 Returns a list of Boards, that you can access, in the specified account.
 
@@ -276,7 +274,7 @@ __Response:__
 ]
 ```
 
-#### `GET /:account_slug/boards/:board_id`
+### `GET /:account_slug/boards/:board_id`
 
 Returns the specific Board.
 
@@ -301,7 +299,7 @@ __Response:__
 }
 ```
 
-#### `POST /:account_slug/boards`
+### `POST /:account_slug/boards`
 
 Creates a new Board in the account.
 
@@ -331,7 +329,7 @@ HTTP/1.1 201 Created
 Location: /897362094/boards/03f5v9zkft4hj9qq0lsn9ohcm.json
 ```
 
-#### `PUT /:account_slug/boards/:board_id`
+### `PUT /:account_slug/boards/:board_id`
 
 Updates a Board. Only board administrators can update a board.
 
@@ -364,7 +362,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `DELETE /:account_slug/boards/:board_id`
+### `DELETE /:account_slug/boards/:board_id`
 
 Deletes a Board. Only board administrators can delete a board.
 
@@ -372,11 +370,11 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-### Cards
+## Cards
 
 Cards are tasks or items of work on a board. They can be organized into columns, tagged, assigned to users, and have comments.
 
-#### `GET /:account_slug/cards`
+### `GET /:account_slug/cards`
 
 Returns a paginated list of cards you have access to. Results can be filtered using query parameters.
 
@@ -437,7 +435,7 @@ __Response:__
 ]
 ```
 
-#### `GET /:account_slug/cards/:card_number`
+### `GET /:account_slug/cards/:card_number`
 
 Returns a specific card by its number.
 
@@ -445,7 +443,7 @@ __Response:__
 
 Same as the card object in the list response.
 
-#### `POST /:account_slug/boards/:board_id/cards`
+### `POST /:account_slug/boards/:board_id/cards`
 
 Creates a new card in a board.
 
@@ -472,7 +470,7 @@ __Response:__
 
 Returns `201 Created` with a `Location` header pointing to the new card.
 
-#### `PUT /:account_slug/cards/:card_number`
+### `PUT /:account_slug/cards/:card_number`
 
 Updates a card.
 
@@ -498,7 +496,7 @@ __Response:__
 
 Returns the updated card.
 
-#### `DELETE /:account_slug/cards/:card_number`
+### `DELETE /:account_slug/cards/:card_number`
 
 Deletes a card. Only the card creator or board administrators can delete cards.
 
@@ -506,7 +504,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `POST /:account_slug/cards/:card_number/closure`
+### `POST /:account_slug/cards/:card_number/closure`
 
 Closes a card.
 
@@ -514,7 +512,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `DELETE /:account_slug/cards/:card_number/closure`
+### `DELETE /:account_slug/cards/:card_number/closure`
 
 Reopens a closed card.
 
@@ -522,7 +520,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `POST /:account_slug/cards/:card_number/not_now`
+### `POST /:account_slug/cards/:card_number/not_now`
 
 Moves a card to "Not Now" status.
 
@@ -530,7 +528,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `POST /:account_slug/cards/:card_number/triage`
+### `POST /:account_slug/cards/:card_number/triage`
 
 Moves a card from triage into a column.
 
@@ -542,7 +540,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `DELETE /:account_slug/cards/:card_number/triage`
+### `DELETE /:account_slug/cards/:card_number/triage`
 
 Sends a card back to triage.
 
@@ -550,7 +548,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `POST /:account_slug/cards/:card_number/taggings`
+### `POST /:account_slug/cards/:card_number/taggings`
 
 Toggles a tag on or off for a card. If the tag doesn't exist, it will be created.
 
@@ -562,7 +560,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `POST /:account_slug/cards/:card_number/assignments`
+### `POST /:account_slug/cards/:card_number/assignments`
 
 Toggles assignment of a user to/from a card.
 
@@ -574,7 +572,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `POST /:account_slug/cards/:card_number/watch`
+### `POST /:account_slug/cards/:card_number/watch`
 
 Subscribes the current user to notifications for this card.
 
@@ -582,7 +580,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `DELETE /:account_slug/cards/:card_number/watch`
+### `DELETE /:account_slug/cards/:card_number/watch`
 
 Unsubscribes the current user from notifications for this card.
 
@@ -590,11 +588,11 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-### Comments
+## Comments
 
 Comments are attached to cards and support rich text.
 
-#### `GET /:account_slug/cards/:card_number/comments`
+### `GET /:account_slug/cards/:card_number/comments`
 
 Returns a paginated list of comments on a card, sorted chronologically (oldest first).
 
@@ -625,7 +623,7 @@ __Response:__
 ]
 ```
 
-#### `GET /:account_slug/cards/:card_number/comments/:comment_id`
+### `GET /:account_slug/cards/:card_number/comments/:comment_id`
 
 Returns a specific comment.
 
@@ -654,7 +652,7 @@ __Response:__
 }
 ```
 
-#### `POST /:account_slug/cards/:card_number/comments`
+### `POST /:account_slug/cards/:card_number/comments`
 
 Creates a new comment on a card.
 
@@ -676,7 +674,7 @@ __Response:__
 
 Returns `201 Created` with a `Location` header pointing to the new comment.
 
-#### `PUT /:account_slug/cards/:card_number/comments/:comment_id`
+### `PUT /:account_slug/cards/:card_number/comments/:comment_id`
 
 Updates a comment. Only the comment creator can update their comments.
 
@@ -698,7 +696,7 @@ __Response:__
 
 Returns the updated comment.
 
-#### `DELETE /:account_slug/cards/:card_number/comments/:comment_id`
+### `DELETE /:account_slug/cards/:card_number/comments/:comment_id`
 
 Deletes a comment. Only the comment creator can delete their comments.
 
@@ -706,11 +704,11 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-### Reactions
+## Reactions
 
 Reactions are short - 16 character long - responses to comments.
 
-#### `GET /:account_slug/cards/:card_number/comments/:comment_id/reactions`
+### `GET /:account_slug/cards/:card_number/comments/:comment_id/reactions`
 
 Returns a list of reactions on a comment.
 
@@ -735,7 +733,7 @@ __Response:__
 ]
 ```
 
-#### `POST /:account_slug/cards/:card_number/comments/:comment_id/reactions`
+### `POST /:account_slug/cards/:card_number/comments/:comment_id/reactions`
 
 Adds a reaction to a comment.
 
@@ -757,7 +755,7 @@ __Response:__
 
 Returns `201 Created` on success.
 
-#### `DELETE /:account_slug/cards/:card_number/comments/:comment_id/reactions/:reaction_id`
+### `DELETE /:account_slug/cards/:card_number/comments/:comment_id/reactions/:reaction_id`
 
 Removes your reaction from a comment.
 
@@ -765,11 +763,11 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-### Steps
+## Steps
 
 Steps are to-do items on a card.
 
-#### `GET /:account_slug/cards/:card_number/steps/:step_id`
+### `GET /:account_slug/cards/:card_number/steps/:step_id`
 
 Returns a specific step.
 
@@ -783,7 +781,7 @@ __Response:__
 }
 ```
 
-#### `POST /:account_slug/cards/:card_number/steps`
+### `POST /:account_slug/cards/:card_number/steps`
 
 Creates a new step on a card.
 
@@ -806,7 +804,7 @@ __Response:__
 
 Returns `201 Created` with a `Location` header pointing to the new step.
 
-#### `PUT /:account_slug/cards/:card_number/steps/:step_id`
+### `PUT /:account_slug/cards/:card_number/steps/:step_id`
 
 Updates a step.
 
@@ -829,7 +827,7 @@ __Response:__
 
 Returns the updated step.
 
-#### `DELETE /:account_slug/cards/:card_number/steps/:step_id`
+### `DELETE /:account_slug/cards/:card_number/steps/:step_id`
 
 Deletes a step.
 
@@ -837,11 +835,11 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-### Tags
+## Tags
 
 Tags are labels that can be applied to cards for organization and filtering.
 
-#### `GET /:account_slug/tags`
+### `GET /:account_slug/tags`
 
 Returns a list of all tags in the account, sorted alphabetically.
 
@@ -864,11 +862,11 @@ __Response:__
 ]
 ```
 
-### Columns
+## Columns
 
 Columns represent stages in a workflow on a board. Cards move through columns as they progress.
 
-#### `GET /:account_slug/boards/:board_id/columns`
+### `GET /:account_slug/boards/:board_id/columns`
 
 Returns a list of columns on a board, sorted by position.
 
@@ -891,7 +889,7 @@ __Response:__
 ]
 ```
 
-#### `GET /:account_slug/boards/:board_id/columns/:column_id`
+### `GET /:account_slug/boards/:board_id/columns/:column_id`
 
 Returns the specified column.
 
@@ -906,7 +904,7 @@ __Response:__
 }
 ```
 
-#### `POST /:account_slug/boards/:board_id/columns`
+### `POST /:account_slug/boards/:board_id/columns`
 
 Creates a new column on the board.
 
@@ -930,7 +928,7 @@ __Response:__
 
 Returns `201 Created` with a `Location` header pointing to the new column.
 
-#### `PUT /:account_slug/boards/:board_id/columns/:column_id`
+### `PUT /:account_slug/boards/:board_id/columns/:column_id`
 
 Updates a column.
 
@@ -953,7 +951,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `DELETE /:account_slug/boards/:board_id/columns/:column_id`
+### `DELETE /:account_slug/boards/:board_id/columns/:column_id`
 
 Deletes a column.
 
@@ -961,11 +959,11 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-### Users
+## Users
 
 Users represent people who have access to an account.
 
-#### `GET /:account_slug/users`
+### `GET /:account_slug/users`
 
 Returns a list of active users in the account.
 
@@ -1012,7 +1010,7 @@ __Response:__
 ]
 ```
 
-#### `GET /:account_slug/users/:user_id`
+### `GET /:account_slug/users/:user_id`
 
 Returns the specified user.
 
@@ -1030,7 +1028,7 @@ __Response:__
 }
 ```
 
-#### `PUT /:account_slug/users/:user_id`
+### `PUT /:account_slug/users/:user_id`
 
 Updates a user. You can only update users you have permission to change.
 
@@ -1053,7 +1051,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `DELETE /:account_slug/users/:user_id`
+### `DELETE /:account_slug/users/:user_id`
 
 Deactivates a user. You can only deactivate users you have permission to change.
 
@@ -1061,11 +1059,11 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-### Notifications
+## Notifications
 
 Notifications inform users about events that happened in the account, such as comments, assignments, and card updates.
 
-#### `GET /:account_slug/notifications`
+### `GET /:account_slug/notifications`
 
 Returns a list of notifications for the current user. Unread notifications are returned first, followed by read notifications.
 
@@ -1100,7 +1098,7 @@ __Response:__
 ]
 ```
 
-#### `POST /:account_slug/notifications/:notification_id/reading`
+### `POST /:account_slug/notifications/:notification_id/reading`
 
 Marks a notification as read.
 
@@ -1108,7 +1106,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `DELETE /:account_slug/notifications/:notification_id/reading`
+### `DELETE /:account_slug/notifications/:notification_id/reading`
 
 Marks a notification as unread.
 
@@ -1116,7 +1114,7 @@ __Response:__
 
 Returns `204 No Content` on success.
 
-#### `POST /:account_slug/notifications/bulk_reading`
+### `POST /:account_slug/notifications/bulk_reading`
 
 Marks all unread notifications as read.
 
