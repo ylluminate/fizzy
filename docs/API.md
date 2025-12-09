@@ -135,7 +135,7 @@ First, request a direct upload URL by sending file metadata:
 
 ```bash
 curl -X POST \
-  -H "Authorization: Bearer your-token" \
+  -H "Authorization: Bearer put-your-access-token-here" \
   -H "Content-Type: application/json" \
   -d '{
     "blob": {
@@ -741,14 +741,14 @@ Adds a reaction to a comment.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `content` | string | Yes | The reaction emoji (e.g., "👍", "❤️", "🎉") |
+| `content` | string | Yes | The reaction text") |
 
 __Request:__
 
 ```json
 {
   "reaction": {
-    "content": "👍"
+    "content": "Great 👍"
   }
 }
 ```
@@ -836,6 +836,33 @@ Deletes a step.
 __Response:__
 
 Returns `204 No Content` on success.
+
+### Tags
+
+Tags are labels that can be applied to cards for organization and filtering.
+
+#### `GET /:account_slug/tags`
+
+Returns a list of all tags in the account, sorted alphabetically.
+
+__Response:__
+
+```json
+[
+  {
+    "id": "03f5v9zo9qlcwwpyc0ascnikz",
+    "title": "bug",
+    "created_at": "2025-12-05T19:36:35.534Z",
+    "url": "http://fizzy.localhost:3006/897362094/cards?tag_ids[]=03f5v9zo9qlcwwpyc0ascnikz"
+  },
+  {
+    "id": "03f5v9zo9qlcwwpyc0ascnilz",
+    "title": "feature",
+    "created_at": "2025-12-05T19:36:35.534Z",
+    "url": "http://fizzy.localhost:3006/897362094/cards?tag_ids[]=03f5v9zo9qlcwwpyc0ascnilz"
+  }
+]
+```
 
 ### Columns
 
@@ -1096,30 +1123,3 @@ Marks all unread notifications as read.
 __Response:__
 
 Returns `204 No Content` on success.
-
-### Tags
-
-Tags are labels that can be applied to cards for organization and filtering.
-
-#### `GET /:account_slug/tags`
-
-Returns a list of all tags in the account, sorted alphabetically.
-
-__Response:__
-
-```json
-[
-  {
-    "id": "03f5v9zo9qlcwwpyc0ascnikz",
-    "title": "bug",
-    "created_at": "2025-12-05T19:36:35.534Z",
-    "url": "http://fizzy.localhost:3006/897362094/cards?tag_ids[]=03f5v9zo9qlcwwpyc0ascnikz"
-  },
-  {
-    "id": "03f5v9zo9qlcwwpyc0ascnilz",
-    "title": "feature",
-    "created_at": "2025-12-05T19:36:35.534Z",
-    "url": "http://fizzy.localhost:3006/897362094/cards?tag_ids[]=03f5v9zo9qlcwwpyc0ascnilz"
-  }
-]
-```
