@@ -39,16 +39,25 @@ class BoardsController < ApplicationController
     @board.update! board_params
     @board.accesses.revise granted: grantees, revoked: revokees if grantees_changed?
 
-    if @board.accessible_to?(Current.user)
-      redirect_to edit_board_path(@board), notice: "Saved"
-    else
-      redirect_to root_path, notice: "Saved (you were removed from the board)"
+    respond_to do |format|
+      format.html do
+        if @board.accessible_to?(Current.user)
+          redirect_to edit_board_path(@board), notice: "Saved"
+        else
+          redirect_to root_path, notice: "Saved (you were removed from the board)"
+        end
+      end
+      format.json { head :no_content }
     end
   end
 
   def destroy
     @board.destroy
-    redirect_to root_path
+
+    respond_to do |format|
+      format.html { redirect_to root_path }
+      format.json { head :no_content }
+    end
   end
 
   private

@@ -166,4 +166,23 @@ class BoardsControllerTest < ActionDispatch::IntegrationTest
     assert_response :created
     assert_equal board_path(Board.last, format: :json), @response.headers["Location"]
   end
+
+  test "update as JSON" do
+    board = boards(:writebook)
+
+    put board_path(board), params: { board: { name: "Updated Name" } }, as: :json
+
+    assert_response :no_content
+    assert_equal "Updated Name", board.reload.name
+  end
+
+  test "destroy as JSON" do
+    board = boards(:writebook)
+
+    assert_difference -> { Board.count }, -1 do
+      delete board_path(board), as: :json
+    end
+
+    assert_response :no_content
+  end
 end
