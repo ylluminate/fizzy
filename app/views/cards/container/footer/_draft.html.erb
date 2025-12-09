@@ -1,14 +1,23 @@
-<div class="card-perma__notch card-perma__notch--bottom">
-  <%= button_to card_publish_path(card), name: "creation_type", value: "add", class: "btn",
-        title: "Create card (#{ hotkey_label(["ctrl", "enter"]) })",
-        form: { data: { controller: "form" } },
-        data: { form_target: "submit", controller: "clicker", action: "keydown.ctrl+enter@document->clicker#click keydown.meta+enter@document->clicker#click" } do %>
-    <span>Create card</span>
-  <% end %>
+<div class="card-perma__notch card-perma__notch--bottom flex-column">
+  <div class="flex gap-half">
+    <%= button_to card_publish_path(card), name: "creation_type", value: "add", class: "btn",
+          title: "Create card (#{ hotkey_label(["ctrl", "enter"]) })",
+          form: { data: { controller: "form" } },
+          data: { form_target: "submit", controller: "clicker", action: "keydown.ctrl+enter@document->clicker#click keydown.meta+enter@document->clicker#click" } do %>
+      <span>Create card</span>
+    <% end %>
 
-  <%= button_to card_publish_path(card), method: :post, class: "btn btn--reversed", name: "creation_type", value: "add_another",
-        title: "Create and add another (#{ hotkey_label(["ctrl", "shift", "enter"]) })", form: { data: { controller: "form" } },
-        data: { form_target: "submit", controller: "clicker", action: "keydown.ctrl+shift+enter@document->clicker#click keydown.meta+shift+enter@document->clicker#click" } do %>
-    <span>Create and add another</span>
+    <%= button_to card_publish_path(card), method: :post, class: "btn btn--reversed", name: "creation_type", value: "add_another",
+          title: "Create and add another (#{ hotkey_label(["ctrl", "shift", "enter"]) })", form: { data: { controller: "form" } },
+          data: { form_target: "submit", controller: "clicker", action: "keydown.ctrl+shift+enter@document->clicker#click keydown.meta+shift+enter@document->clicker#click" } do %>
+      <span>Create and add another</span>
+    <% end %>
+  </div>
+
+  <% if Current.account.plan.free? && nearing_plan_cards_limit %>
+    <div class="settings_subscription__warning full-width pad-inline center margin-block-half">
+      You’ve used <%= Current.account.cards_count %> out of <%= Plan.free.card_limit %> free cards. <strong><%= link_to "Upgrade to unlimitted", account_settings_path(anchor: "subscription") %></strong>.
+    </div>
   <% end %>
 </div>
+

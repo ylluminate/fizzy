@@ -12,4 +12,8 @@ module SubscriptionsHelper
   def exceeds_plan_cards_limit
     Current.account.cards_count >= Plan.free.card_limit
   end
+
+  def nearing_plan_cards_limit
+     Plan.free.card_limit - Current.account.cards_count < 900
+  end
 end

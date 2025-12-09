@@ -156,5 +156,13 @@
     .settings-subscription__panel {
       background: var(--settings-subscription-background);
     }
+
+    .settings_subscription__warning {
+      color: var(--settings-subscription-text-color);
+
+      a {
+        color: var(--settings-subscription-text-color);
+      }
+    }
   }
 }
