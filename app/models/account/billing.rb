@@ -31,6 +31,12 @@ module Account::Billing
   end
 
   def storage_limit_exceeded?
-    bytes_used > plan.storage_limit
+    bytes_used > storage_limit
+  end
+
+  def storage_limit
+    # TODO: We should account for storage-add ons here.
+    plan.storage_limit
   end
 end
+
