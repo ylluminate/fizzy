@@ -8,7 +8,7 @@ image: fizzy
 # Where to deploy fizzy
 servers:
   web:
-    - fizzy.example.com  # Set your server name here
+    - 192.168.1.211  # Set your server name here
 
 # How you connect to your server
 ssh:
@@ -16,8 +16,8 @@ ssh:
 
 # Automatic SSL
 proxy:
-  ssl: true                # Set this to false if you *don't* want SSL
-  host: fizzy.example.com  # Set your server name here to use automatic SSL
+  ssl: false                      # Set this to false if you *don't* want SSL
+  host: fizzy.orbitalimpact.com   # Set your server name here to use automatic SSL
 
 # Your application configuration (secrets come from .kamal/secrets).
 env:
@@ -28,9 +28,12 @@ env:
     - SMTP_USERNAME
     - SMTP_PASSWORD
   clear:
-    MAILER_FROM_ADDRESS: support@example.com # The email "from" address that Fizzy sends email from
-    SMTP_ADDRESS: mail.example.com # The SMTP server you'll use to send email
-    SOLID_QUEUE_IN_PUMA: true # Run background jobs in the app container
+    MAILER_FROM_ADDRESS: fizzy@orbitalimpact.com  # The email "from" address that Fizzy sends email from
+    SMTP_ADDRESS: smtp.gmail.com                  # The SMTP server you'll use to send email
+    SMTP_PORT: "587"
+    SMTP_AUTHENTICATION: plain
+    SMTP_ENABLE_STARTTLS_AUTO: "true"
+    SOLID_QUEUE_IN_PUMA: true                     # Run background jobs in the app container
 
 
 #-- General configuration --#
@@ -50,7 +53,9 @@ aliases:
 # Use a persistent storage volume for sqlite database files and local Active Storage files.
 # Recommended to change this to a mounted volume path that is backed up off server.
 volumes:
-  - "fizzy_storage:/rails/storage"
+#  - "fizzy_storage:/rails/storage"
+  - "/var/lib/fizzy/storage:/rails/storage"
+
 
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid
 # hitting 404 on in-flight requests. Combines all files from new and old
