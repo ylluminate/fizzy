@@ -17,7 +17,15 @@ ssh:
 # Automatic SSL
 proxy:
   ssl: false                      # Set this to false if you *don't* want SSL
-  host: "*"   # Allow any hostname
+  hosts: 
+    - fizzy.orbitalimpact.com   
+    - 192.168.1.211
+    - r710-pve-fizzy
+    - r710-pve-fizzy.local
+    - r710-pve-fizzy.lan
+    - r710-pve-fizzy.my.lan
+    - fizzy.lan
+    - fizzy
 
 # Your application configuration (secrets come from .kamal/secrets).
 env:
