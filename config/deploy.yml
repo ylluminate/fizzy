@@ -27,8 +27,9 @@ env:
     - VAPID_PRIVATE_KEY
     - SMTP_USERNAME
     - SMTP_PASSWORD
+
   clear:
-    MAILER_FROM_ADDRESS: fizzy@orbitalimpact.com  # The email "from" address that Fizzy sends email from
+    MAILER_FROM_ADDRESS: admin@orbitalimpact.com  # The email "from" address that Fizzy sends email from
     SMTP_ADDRESS: smtp.gmail.com                  # The SMTP server you'll use to send email
     SMTP_PORT: "587"
     SMTP_AUTHENTICATION: plain
