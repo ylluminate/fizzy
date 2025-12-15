@@ -24,11 +24,14 @@ module ActiveStorageControllerExtensions
 
   included do
     before_action do
-      # Add script_name so that Disk Service will generate correct URLs for uploads
+      # Respect X-Forwarded headers when behind reverse proxy (NPM, etc.)
+      forwarded_proto = request.headers["X-Forwarded-Proto"].presence
+      forwarded_host = request.headers["X-Forwarded-Host"].presence
+      
       ActiveStorage::Current.url_options = {
-        protocol: request.protocol,
-        host: request.host,
-        port: request.port,
+        protocol: forwarded_proto ? "#{forwarded_proto}://" : request.protocol,
+        host: forwarded_host || request.host,
+        port: forwarded_host ? nil : request.port,  # Don't include port when using forwarded host
         script_name: request.script_name
       }
     end
