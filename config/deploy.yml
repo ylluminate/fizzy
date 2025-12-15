@@ -1,79 +1,78 @@
-[1mSTDIN[0m
-[38;2;248;248;242m# Name of this app[0m
-[38;2;248;248;242mservice: fizzy[0m
-[38;2;248;248;242mimage: fizzy[0m
+# Name of this app
+service: fizzy
+image: fizzy
 
 
-[38;2;248;248;242m#-- About your deployment --#[0m
+#-- About your deployment --#
 
-[38;2;248;248;242m# Where to deploy fizzy[0m
-[38;2;248;248;242mservers:[0m
-[38;2;248;248;242m  web:[0m
-[38;2;248;248;242m    - 192.168.1.211  # Set your server name here[0m
+# Where to deploy fizzy
+servers:
+  web:
+    - 192.168.1.211  # Set your server name here
 
-[38;2;248;248;242m# How you connect to your server[0m
-[38;2;248;248;242mssh:[0m
-[38;2;248;248;242m  user: root  # If you use a different username to SSH to your server, specify it here[0m
+# How you connect to your server
+ssh:
+  user: root  # If you use a different username to SSH to your server, specify it here
 
-[38;2;248;248;242m# Automatic SSL[0m
-[38;2;248;248;242mproxy:[0m
-[38;2;248;248;242m  ssl: false                      # Set this to false if you *don't* want SSL[0m
-[38;2;248;248;242m  hosts:[0m
-[38;2;248;248;242m    - fizzy.orbitalimpact.com[0m
-[38;2;248;248;242m    - 192.168.1.211[0m
-[38;2;248;248;242m    - r710-pve-fizzy[0m
-[38;2;248;248;242m    - r710-pve-fizzy.local[0m
-[38;2;248;248;242m    - r710-pve-fizzy.lan[0m
-[38;2;248;248;242m    - r710-pve-fizzy.my.lan[0m
-[38;2;248;248;242m    - fizzy.lan[0m
-[38;2;248;248;242m    - fizzy[0m
+# Automatic SSL
+proxy:
+  ssl: false                      # Set this to false if you *don't* want SSL
+  hosts:
+    - fizzy.orbitalimpact.com
+    - 192.168.1.211
+    - r710-pve-fizzy
+    - r710-pve-fizzy.local
+    - r710-pve-fizzy.lan
+    - r710-pve-fizzy.my.lan
+    - fizzy.lan
+    - fizzy
 
-[38;2;248;248;242m# Your application configuration (secrets come from .kamal/secrets).[0m
-[38;2;248;248;242menv:[0m
-[38;2;248;248;242m  secret:[0m
-[38;2;248;248;242m    - SECRET_KEY_BASE[0m
-[38;2;248;248;242m    - VAPID_PUBLIC_KEY[0m
-[38;2;248;248;242m    - VAPID_PRIVATE_KEY[0m
-[38;2;248;248;242m    - SMTP_USERNAME[0m
-[38;2;248;248;242m    - SMTP_PASSWORD[0m
+# Your application configuration (secrets come from .kamal/secrets).
+env:
+  secret:
+    - SECRET_KEY_BASE
+    - VAPID_PUBLIC_KEY
+    - VAPID_PRIVATE_KEY
+    - SMTP_USERNAME
+    - SMTP_PASSWORD
 
-[38;2;248;248;242m  clear:[0m
-[38;2;248;248;242m    MAILER_FROM_ADDRESS: admin@orbitalimpact.com  # The email "from" address that Fizzy sends email from[0m
-[38;2;248;248;242m    SMTP_ADDRESS: smtp.gmail.com                  # The SMTP server you'll use to send email[0m
-[38;2;248;248;242m    SMTP_PORT: "587"[0m
-[38;2;248;248;242m    SMTP_AUTHENTICATION: plain[0m
-[38;2;248;248;242m    SMTP_ENABLE_STARTTLS_AUTO: "true"[0m
-[38;2;248;248;242m    MULTI_TENANT: false                           # Set to true to allow multiple accounts to sign up[0m
-[38;2;248;248;242m    SOLID_QUEUE_IN_PUMA: true                     # Run background jobs in the app container[0m
-[38;2;248;248;242m    DISABLE_SSL: "true"                           # LAN deployment behind NPM - no SSL needed[0m
-
-
-[38;2;248;248;242m#-- General configuration --#[0m
-
-[38;2;248;248;242m# Use a local registry to deploy[0m
-[38;2;248;248;242mregistry:[0m
-[38;2;248;248;242m  server: localhost:5555[0m
-
-[38;2;248;248;242m# Handy aliases for interacting with your deployment. For eaxmple: `bin/kamal console` will connect to a[0m
-[38;2;248;248;242m# Rails console in production.[0m
-[38;2;248;248;242maliases:[0m
-[38;2;248;248;242m  console: app exec --interactive --reuse "bin/rails console"[0m
-[38;2;248;248;242m  shell: app exec --interactive --reuse "bash"[0m
-[38;2;248;248;242m  logs: app logs -f[0m
-[38;2;248;248;242m  dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"[0m
-
-[38;2;248;248;242m# Use a persistent storage volume for sqlite database files and local Active Storage files.[0m
-[38;2;248;248;242m# Recommended to change this to a mounted volume path that is backed up off server.[0m
-[38;2;248;248;242mvolumes:[0m
-[38;2;248;248;242m#  - "fizzy_storage:/rails/storage"[0m
-[38;2;248;248;242m  - "/var/lib/fizzy/storage:/rails/storage"[0m
+  clear:
+    MAILER_FROM_ADDRESS: admin@orbitalimpact.com  # The email "from" address that Fizzy sends email from
+    SMTP_ADDRESS: smtp.gmail.com                  # The SMTP server you'll use to send email
+    SMTP_PORT: "587"
+    SMTP_AUTHENTICATION: plain
+    SMTP_ENABLE_STARTTLS_AUTO: "true"
+    MULTI_TENANT: false                           # Set to true to allow multiple accounts to sign up
+    SOLID_QUEUE_IN_PUMA: true                     # Run background jobs in the app container
+    DISABLE_SSL: "true"                           # LAN deployment behind NPM - no SSL needed
 
 
-[38;2;248;248;242m# Bridge fingerprinted assets, like JS and CSS, between versions to avoid[0m
-[38;2;248;248;242m# hitting 404 on in-flight requests. Combines all files from new and old[0m
-[38;2;248;248;242m# version inside the asset_path.[0m
-[38;2;248;248;242masset_path: /rails/public/assets[0m
+#-- General configuration --#
 
-[38;2;248;248;242m# Configure the image builder.[0m
-[38;2;248;248;242mbuilder:[0m
-[38;2;248;248;242m  arch: amd64[0m
+# Use a local registry to deploy
+registry:
+  server: localhost:5555
+
+# Handy aliases for interacting with your deployment. For eaxmple: `bin/kamal console` will connect to a
+# Rails console in production.
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
+
+# Use a persistent storage volume for sqlite database files and local Active Storage files.
+# Recommended to change this to a mounted volume path that is backed up off server.
+volumes:
+#  - "fizzy_storage:/rails/storage"
+  - "/var/lib/fizzy/storage:/rails/storage"
+
+
+# Bridge fingerprinted assets, like JS and CSS, between versions to avoid
+# hitting 404 on in-flight requests. Combines all files from new and old
+# version inside the asset_path.
+asset_path: /rails/public/assets
+
+# Configure the image builder.
+builder:
+  arch: amd64
