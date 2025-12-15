@@ -11,12 +11,13 @@ Rails.application.configure do
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
       address: smtp_address,
-      port: ENV.fetch("SMTP_PORT", "587").to_i,
+      port: ENV.fetch("SMTP_PORT", ENV["SMTP_TLS"] == "true" ? "465" : "587").to_i,
       domain: ENV.fetch("SMTP_DOMAIN", nil),
       user_name: ENV.fetch("SMTP_USERNAME", nil),
       password: ENV.fetch("SMTP_PASSWORD", nil),
       authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain"),
-      enable_starttls_auto: ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true") == "true"
+      tls: ENV["SMTP_TLS"] == "true",
+      openssl_verify_mode: ENV["SMTP_SSL_VERIFY_MODE"]
     }
   end
 
@@ -42,6 +43,12 @@ Rails.application.configure do
     "Cache-Control" => "public, max-age=#{1.year.to_i}"
   }
 
+  # Select Active Storage service via env var; default to local disk.
+  # Don't overwrite if it's already been set (e.g. by fizzy-saas)
+  if config.active_storage.service.blank?
+    config.active_storage.service = ENV.fetch("ACTIVE_STORAGE_SERVICE", "local").to_sym
+  end
+
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
@@ -54,12 +61,15 @@ Rails.application.configure do
   # config.action_cable.url = "wss://example.com/cable"
   # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
 
+  # Set DISABLE_SSL=true to disable all SSL options, rather than specify each individually
+  ssl_enabled = "true" unless ENV["DISABLE_SSL"] == "true"
+
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
-  config.assume_ssl = ENV.fetch("ASSUME_SSL", "true") == "false"
+  config.assume_ssl = ENV.fetch("ASSUME_SSL", ssl_enabled) == "true"
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = ENV.fetch("FORCE_SSL", "true") == "false"
+  config.force_ssl = ENV.fetch("FORCE_SSL", ssl_enabled) == "true"
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
